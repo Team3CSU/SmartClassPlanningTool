@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
+#  from core.data_parser import yes
 
 app = tk.Tk()
 app.title("SmartClassPlanning Tool")
@@ -14,13 +15,13 @@ def browse_file(file_num):
 
 def submit_files():
     # TODO handle input files
-    file_paths = [entry.get() for entry in file_entries]
+    file_paths = [uploaded_file.get() for uploaded_file in file_entries]
     print("Selected Files:")
     for file_path in file_paths:
         print(file_path)
 
 
-file_labels = ["File 1:", "File 2:", "File 3:"]
+file_labels = ["Degree Works:", "Prerequisite Graph:", "Class Schedule:"]
 file_entries = []
 
 for i, label_text in enumerate(file_labels):
