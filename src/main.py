@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
-#  from core.data_parser import yes
+from core.data_parser import parse_course_requirements_from_pdf
 
 app = tk.Tk()
 app.title("SmartClassPlanning Tool")
@@ -17,6 +17,8 @@ def submit_files():
     # TODO handle input files
     file_paths = [uploaded_file.get() for uploaded_file in file_entries]
     print("Selected Files:")
+    assert(file_entries[0].endswith(".pdf"))
+    parse_course_requirements_from_pdf(file_entries[0])
     for file_path in file_paths:
         print(file_path)
 
