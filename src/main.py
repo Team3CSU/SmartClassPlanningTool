@@ -1,9 +1,24 @@
 import tkinter as tk
+import tkinter.messagebox
 from tkinter import filedialog
-from core.data_parser import parse_course_requirements_from_pdf
+
+from SmartClassPlanningTool.src.core.class_schedule import process_class_schedule
+from SmartClassPlanningTool.src.core.prerequisite_graph import process_prerequisites
+from SmartClassPlanningTool.src.core.recommendation import generate_degree_plan
+from core.data_parser import extract_courses_from_pdf, extract_and_store_courses
 
 app = tk.Tk()
 app.title("SmartClassPlanning Tool")
+
+
+def validate_files(file_paths):
+    if "pdf" not in file_paths[0]:
+        return False
+    if "json" not in file_paths[1]:
+        return False
+    if "csv" not in file_paths[2]:
+        return False
+    return True
 
 
 def browse_file(file_num):
@@ -14,13 +29,18 @@ def browse_file(file_num):
 
 
 def submit_files():
-    # TODO handle input files
     file_paths = [uploaded_file.get() for uploaded_file in file_entries]
-    print("Selected Files:")
-    assert(file_entries[0].endswith(".pdf"))
-    parse_course_requirements_from_pdf(file_entries[0])
-    for file_path in file_paths:
-        print(file_path)
+    are_files_valid = validate_files(file_paths)
+
+    if are_files_valid:
+        text = extract_and_store_courses(file_paths[0])
+        # texter = extract_courses_from_pdf(file_paths[0])
+        graph = process_prerequisites(file_paths[1])
+        schedule = process_class_schedule(file_paths[2])
+        courses_to_take = generate_degree_plan(text, graph)
+        print(courses_to_take)
+    else:
+        tkinter.messagebox.showwarning(title="yes", message="please provide required input files")
 
 
 file_labels = ["Degree Works:", "Prerequisite Graph:", "Class Schedule:"]
