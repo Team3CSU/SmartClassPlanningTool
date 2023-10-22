@@ -98,7 +98,7 @@ def generate_degree_plan(text: dict, graph: DiGraph, Courseshedule:dict=None):
     
     print("stating acad planner",f"for {len(courses_to_take)}, {len(set(courses_to_take))}")
     print(*courses_to_take,sep="\t")
-    coursesTaken=AcadPlanner(courses_plan_dict,Courseshedule,graph,courses_to_take,Sems)
+    coursesTaken,planned=AcadPlanner(courses_plan_dict,Courseshedule,graph,courses_to_take,Sems)
     for crs in courses_to_take:
         if crs not in coursesTaken:
             print(crs,"Not taken why why")
@@ -108,26 +108,27 @@ def generate_degree_plan(text: dict, graph: DiGraph, Courseshedule:dict=None):
     print("stating acad planner",f"for {len(coursesTaken)}, {len(set(coursesTaken))}")
     print(*coursesTaken,sep="\t")
 
-def AcadPlanner(courses_plan_dict,Courseshedule,graph,Sems,courses_to_take,coursesTaken=None,plandep=0):
+def AcadPlanner(courses_plan_dict,Courseshedule,graph,Sems,courses_to_take,coursesTaken=None,plandep=0,after=None):
     if(not coursesTaken): coursesTaken=list()
     for course in sorted(courses_plan_dict,key=lambda x:sorter(courses_plan_dict[x]),reverse=True):
+        plannedmax=None
         dependencies = courses_plan_dict.get(course, extractPreq([course],course,graph)[0])
         # if no dep, place it
         if(len(dependencies)):
             # iterate dependecies depth wise
             for dep in sorted(dependencies,key=lambda x : x[1],reverse=True):
                 print(f"planning {course} with {dep}")
-                ctt,planed = AcadPlanner({dep[0]:extractPreq([dep[0]],dep[0],graph)[0]},Courseshedule,graph,Sems,coursesTaken,plandep=1)
+                ctt,planed = AcadPlanner({dep[0]:extractPreq([dep[0]],dep[0],graph)[0]},Courseshedule,graph,Sems,coursesTaken,plandep=1,after=after)
                 coursesTaken.extend(ctt)
         
         if course in coursesTaken:
             print(f"Already placed")
             continue
-        coursesTaken.append(course)
-        PlaceCourse(course,Courseshedule,plandep,Sems,after=None)
+        planed=coursesTaken.append((course,plannedmax))
+        PlaceCourse(course,Courseshedule,plandep,Sems,after)
         print(f"{course} is being placed")
         
-    return coursesTaken
+    return coursesTaken,planed
     
 
 def PlaceCourse(course,Courseshedule,isdependency,Sems,after):
