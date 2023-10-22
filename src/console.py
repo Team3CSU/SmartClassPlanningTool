@@ -40,13 +40,13 @@ import argparse
 
 def main():
     parser = argparse.ArgumentParser(description='Process some files.')
-    parser.add_argument('f1', type=argparse.FileType('r'), help='Path to the first file [Degree Works]')
-    parser.add_argument('f2', type=argparse.FileType('r'), help='Path to the second file [Prerequisite Graph]')
-    parser.add_argument('f3', type=argparse.FileType('r'), help='Path to the third file [Class Schedule]')
+    parser.add_argument('f1', type=str, help='Path to the first file [Degree Works]')
+    parser.add_argument('f2', type=str, help='Path to the second file [Prerequisite Graph]')
+    parser.add_argument('f3', type=str, help='Path to the third file [Class Schedule]')
     args = parser.parse_args()
 
     # Now you can use args.file1, args.file2, and args.file3 to access the files
-    file_paths = [args.file1, args.file2,  args.file3]
+    file_paths = [args.f1, args.f2,  args.f3]
     are_files_valid = validate_files(file_paths)
 
     if are_files_valid:
