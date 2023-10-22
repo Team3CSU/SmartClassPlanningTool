@@ -36,3 +36,8 @@ Functionalities:
 
 
 DONE 2) Regex at data_parser file in function extract_and_store_courses correct the regular expression code 
+
+3) Handle input 3: input 3 is course schedule
+4) courses that are offered are grouped by semesters
+5) we have to read that file
+6) then we will match courses to take with the schedule and generate a plan for the student
