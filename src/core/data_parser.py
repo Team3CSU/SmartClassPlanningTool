@@ -61,10 +61,18 @@ def extract_and_store_courses(pdf_file_path):
     current_courses = []
 
     text = extract_text(pdf_file_path)
+    count = 0
     for line in text.split('\n'):
-        if re.search(r"AREA [A-Z]:", line):
+        if re.search(r"^\s*AREA [A-Z]:?", line):
+            count+=1
             # Extract the area name
-            current_area = re.search(r"AREA [A-Z]: (.+)", line).group(1).strip()
+            try:
+                current_area = re.search(r"^\s*AREA [A-Z]:\s*(.+)", line).group(1).strip()
+            except: 
+                try:
+                    current_area = re.search(r"^\s*(AREA [A-Z])", line).group(1).strip()
+                except:
+                    current_area = f"Unamed Area : {count}"
             current_courses = []
         #  CPSC 1223 CYBR MATH=> [A-Z]+\s+\d+[*] 
         elif re.search(r"Still Needed:.*?([A-Z]+\s+\d+[A-Z]?[*]?[^@])", line):
