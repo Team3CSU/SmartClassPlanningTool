@@ -108,7 +108,7 @@ def generate_degree_plan(text: dict, graph: DiGraph, Courseshedule:dict=None):
     print("stating acad planner",f"for {len(coursesTaken)}, {len(set(coursesTaken))}")
     print(*coursesTaken,sep="\t")
 
-def AcadPlanner(courses_plan_dict,Courseshedule,graph,Sems,courses_to_take,coursesTaken=None):
+def AcadPlanner(courses_plan_dict,Courseshedule,graph,Sems,courses_to_take,coursesTaken=None,plandep=0):
     if(not coursesTaken): coursesTaken=list()
     for course in sorted(courses_plan_dict,key=lambda x:sorter(courses_plan_dict[x]),reverse=True):
         dependencies = courses_plan_dict.get(course, extractPreq([course],course,graph)[0])
@@ -117,17 +117,29 @@ def AcadPlanner(courses_plan_dict,Courseshedule,graph,Sems,courses_to_take,cours
             # iterate dependecies depth wise
             for dep in sorted(dependencies,key=lambda x : x[1],reverse=True):
                 print(f"planning {course} with {dep}")
-                coursesTaken.extend(AcadPlanner({dep[0]:extractPreq([dep[0]],dep[0],graph)[0]},Courseshedule,graph,Sems,coursesTaken))
+                ctt,planed = AcadPlanner({dep[0]:extractPreq([dep[0]],dep[0],graph)[0]},Courseshedule,graph,Sems,coursesTaken,plandep=1)
+                coursesTaken.extend(ctt)
         
         if course in coursesTaken:
             print(f"Already placed")
             continue
         coursesTaken.append(course)
+        PlaceCourse(course,Courseshedule,plandep,Sems,after=None)
         print(f"{course} is being placed")
         
     return coursesTaken
     
 
+def PlaceCourse(course,Courseshedule,isdependency,Sems,after):
+    """
+    course:coursename
+    Courseshedule:dictinoray <coursename:listof semesters in which available
+    is dependnecy : says it is dependecy so earliest posible sem to be assigned after given sem
+    Sems: plan of the sems asiigned with courses, where plancourse detail is updated
+    after:semester from which we are planning 
+    """
+    planned=None
+    return planned
 
 def generate_degree_plan_phase1(text: dict, graph: DiGraph, Courseshedule:dict=None):
     courses_to_take = []
