@@ -12,7 +12,7 @@ def validate_files(file_paths):
         return False
     if "json" not in file_paths[1]:
         return False
-    if "csv" not in file_paths[2]:
+    if "json" not in file_paths[2]:
         return False
     return True
 
@@ -40,9 +40,9 @@ import argparse
 
 def main():
     parser = argparse.ArgumentParser(description='Process some files.')
-    parser.add_argument('f1', type=str, help='Path to the first file [Degree Works]')
-    parser.add_argument('f2', type=str, help='Path to the second file [Prerequisite Graph]')
-    parser.add_argument('f3', type=str, help='Path to the third file [Class Schedule]')
+    parser.add_argument('f1', type=str, help='Path to the first file [Degree Works]',default="../Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/Sample Input2.pdf")
+    parser.add_argument('f2', type=str, help='Path to the second file [Prerequisite Graph]',default="../Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/preReq.json")
+    parser.add_argument('f3', type=str, help='Path to the third file [Class Schedule]',default="../Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/courseSchedule.json")
     args = parser.parse_args()
 
     # Now you can use args.file1, args.file2, and args.file3 to access the files
@@ -56,8 +56,10 @@ def main():
         # texter = extract_courses_from_pdf(file_paths[0])
         print("\n\ngraph:")
         graph = process_prerequisites(file_paths[1])
+        #schedule
+        print("\n\schedule:")
         schedule = process_class_schedule(file_paths[2])
-        courses_to_take = generate_degree_plan(text, graph)
+        courses_to_take = generate_degree_plan(text, graph,)
         print("\n\ncourses_to_take:")
         print(courses_to_take)
     else:
