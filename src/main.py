@@ -2,9 +2,9 @@ import tkinter as tk
 import tkinter.messagebox
 from tkinter import filedialog
 
-from SmartClassPlanningTool.src.core.class_schedule import process_class_schedule
-from SmartClassPlanningTool.src.core.prerequisite_graph import process_prerequisites
-from SmartClassPlanningTool.src.core.recommendation import generate_degree_plan
+from core.class_schedule import process_class_schedule
+from core.prerequisite_graph import process_prerequisites
+from core.recommendation import generate_degree_plan
 from core.data_parser import extract_courses_from_pdf, extract_and_store_courses
 
 app = tk.Tk()
