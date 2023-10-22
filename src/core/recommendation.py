@@ -117,7 +117,7 @@ def AcadPlanner(courses_plan_dict,Courseshedule,graph,Sems,courses_to_take,cours
             # iterate dependecies depth wise
             for dep in sorted(dependencies,key=lambda x : x[1],reverse=True):
                 print(f"planning {course} with {dep}")
-                AcadPlanner({dep[0]:extractPreq([dep[0]],dep[0],graph)[0]},Courseshedule,graph,Sems,coursesTaken)
+                coursesTaken.extend(AcadPlanner({dep[0]:extractPreq([dep[0]],dep[0],graph)[0]},Courseshedule,graph,Sems,coursesTaken))
         
         if course in coursesTaken:
             print(f"Already placed")
