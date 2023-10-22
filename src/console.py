@@ -51,10 +51,14 @@ def main():
 
     if are_files_valid:
         text = extract_and_store_courses(file_paths[0])
+        print("\n\nExtracted courses:")
+        for k in text: print(f"{k}  :                 {text[k]}")
         # texter = extract_courses_from_pdf(file_paths[0])
+        print("\n\ngraph:")
         graph = process_prerequisites(file_paths[1])
         schedule = process_class_schedule(file_paths[2])
         courses_to_take = generate_degree_plan(text, graph)
+        print("\n\ncourses_to_take:")
         print(courses_to_take)
     else:
         print("Please provide valid input files.")
