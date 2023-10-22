@@ -66,17 +66,18 @@ def extract_and_store_courses(pdf_file_path):
             # Extract the area name
             current_area = re.search(r"AREA [A-Z]: (.+)", line).group(1).strip()
             current_courses = []
-        elif re.search(r"Still Needed:.*?([A-Z]+\s+\d+[*@]?)", line):
+        #  CPSC 1223 CYBR MATH=> [A-Z]+\s+\d+[*] 
+        elif re.search(r"Still Needed:.*?([A-Z]+\s+\d+[A-Z]?[*@]?)", line):
             # Extract course information (e.g., "1 Class in CPSC 1302*")
-            match = re.findall(r"([A-Z]+\s+\d+[*@]?)", line)
+            match = re.findall(r"([A-Z]+\s+\d+[A-Z]?[*@]?)", line)
             current_courses.extend(match)
         elif current_area and not re.search(r"AREA [A-Z]:", line) and line.strip():
             # Continue to collect course information for the current area
-            match = re.findall(r"([A-Z]+\s+\d+[*@]?)", line)
+            match = re.findall(r"([A-Z]+\s+\d+[A-Z]?[*@]?)", line)
             current_courses.extend(match)
         elif not current_area and line.strip():
             # Handle cases where the area is not explicitly mentioned
-            match = re.findall(r"([A-Z]+\s+\d+[*@]?)", line)
+            match = re.findall(r"([A-Z]+\s+\d+[A-Z]?[*@]?)", line)
             current_courses.extend(match)
 
         if current_area:
