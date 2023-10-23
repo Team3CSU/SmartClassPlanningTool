@@ -64,11 +64,11 @@ def extract_and_store_courses(pdf_file_path):
     count = 0
     for line in text.split('\n'):
         if re.search(r"^\s*AREA [A-Z]:?", line):
-            count+=1
+            count += 1
             # Extract the area name
             try:
                 current_area = re.search(r"^\s*AREA [A-Z]:\s*(.+)", line).group(1).strip()
-            except: 
+            except:
                 try:
                     current_area = re.search(r"^\s*(AREA [A-Z])", line).group(1).strip()
                 except:

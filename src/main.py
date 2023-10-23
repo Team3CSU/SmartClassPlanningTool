@@ -5,7 +5,7 @@ from tkinter import filedialog
 from core.class_schedule import process_class_schedule
 from core.prerequisite_graph import process_prerequisites
 from core.recommendation import generate_degree_plan
-from core.data_parser import extract_courses_from_pdf, extract_and_store_courses
+from core.data_parser import extract_and_store_courses
 
 app = tk.Tk()
 app.title("SmartClassPlanning Tool")
@@ -16,7 +16,7 @@ def validate_files(file_paths):
         return False
     if "json" not in file_paths[1]:
         return False
-    if "csv" not in file_paths[2]:
+    if "json" not in file_paths[2]:
         return False
     return True
 
@@ -37,10 +37,10 @@ def submit_files():
         # texter = extract_courses_from_pdf(file_paths[0])
         graph = process_prerequisites(file_paths[1])
         schedule = process_class_schedule(file_paths[2])
-        courses_to_take = generate_degree_plan(text, graph)
+        courses_to_take = generate_degree_plan(text, graph, schedule)
         print(courses_to_take)
     else:
-        tkinter.messagebox.showwarning(title="yes", message="please provide required input files")
+        tkinter.messagebox.showwarning(title="Warning", message="Please provide required input files")
 
 
 file_labels = ["Degree Works:", "Prerequisite Graph:", "Class Schedule:"]
