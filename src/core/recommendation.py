@@ -31,7 +31,6 @@ def cleanCourseCode(coursesRaw: list, Courseshedule):
             courses.append(course)
         else:
             print('{} is missing'.format(course))
-            # input()
     return courses
 
 
@@ -41,9 +40,9 @@ def newAcademicYr():
 
 
 def sorter(deps):
-    if (not deps): return -1;
+    if (not deps):
+        return -1
     depth = 0
-    ##print(deps)
     for code, crsdepth in deps:
         depth = max(depth, crsdepth)
     return depth
@@ -99,7 +98,6 @@ def generate_degree_plan(text: dict, graph: DiGraph, Courseshedule: dict = None)
     for course in sorted(courses_plan_dict, key=lambda x: sorter(courses_plan_dict[x]), reverse=True):
         for dep in courses_plan_dict[course]:
             pass
-            # print(f'\t\t{dep}',end="")
 
     coursesTaken, planned = AcadPlanner(courses_plan_dict, Courseshedule, graph, Sems, courses_to_take, after=(0, -1))
     coursesTaken_c = [c for c, t in coursesTaken]
@@ -118,10 +116,6 @@ def AcadPlanner(courses_plan_dict, Courseshedule, graph, Sems, courses_to_take, 
         coursesTaken = list()
     planed = None
     for course in sorted(courses_plan_dict, key=lambda x: sorter(courses_plan_dict[x]), reverse=True):
-        # ##print(f'{course} dependeinces:\t\t\t:',end=" ")
-        # for dep in courses_plan_dict[course]:
-        #     ##print(f'\t\t{dep}',end="")
-        # continue
         plannedmax = after
         planlst = [after]
         dependencies = courses_plan_dict.get(course, extractPreq([course], course, graph)[0])
@@ -130,10 +124,10 @@ def AcadPlanner(courses_plan_dict, Courseshedule, graph, Sems, courses_to_take, 
             # iterate dependecies depth wise
             lvl = -1
             for dep in sorted(dependencies, key=lambda x: x[1], reverse=True):
-                if lvl == -1: lvl = dep[1]
+                if lvl == -1:
+                    lvl = dep[1]
                 cc = [c for c, c_ in coursesTaken]
                 if dep[0] in cc:
-                    ##print(f"Already placed")
                     continue
                 if lvl > dep[1]:
                     lvl = dep[1]
@@ -226,6 +220,7 @@ def generate_degree_plan_phase1(text: dict, graph: DiGraph, Courseshedule: dict 
                     course = get_prerequisite(course, graph)
                     if course is not None and course not in courses_to_take:
                         courses_to_take.append(course)
-                if original_course not in courses_to_take: courses_to_take.append(original_course)
+                if original_course not in courses_to_take:
+                    courses_to_take.append(original_course)
                 counter = counter + 1
     return courses_to_take
