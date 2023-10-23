@@ -4,6 +4,7 @@ from core.class_schedule import process_class_schedule
 from core.prerequisite_graph import process_prerequisites
 from core.recommendation import generate_degree_plan
 from core.data_parser import extract_courses_from_pdf, extract_and_store_courses
+from core.excel_writer import create_excel_file
 
 
 
@@ -43,6 +44,7 @@ def main():
     parser.add_argument('f1', type=str, help='Path to the first file [Degree Works]',default="../Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/Sample Input2.pdf")
     parser.add_argument('f2', type=str, help='Path to the second file [Prerequisite Graph]',default="../Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/preReq.json")
     parser.add_argument('f3', type=str, help='Path to the third file [Class Schedule]',default="../Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/courseSchedule.json")
+    parser.add_argument('file', type=str, help='Path to the results')
     args = parser.parse_args()
 
     # Now you can use args.file1, args.file2, and args.file3 to access the files
@@ -59,9 +61,9 @@ def main():
         #schedule
         print("\n\schedule:")
         schedule = process_class_schedule(file_paths[2])
-        courses_to_take = generate_degree_plan(text, graph,)
-        print("\n\ncourses_to_take:")
-        print(courses_to_take)
+        courses_to_take = generate_degree_plan(text, graph,schedule)
+        # print("\n\ncourses_to_ta
+        create_excel_file(courses_to_take,args.file)
     else:
         print("Please provide valid input files.")
 
