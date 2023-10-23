@@ -1,3 +1,4 @@
 pyenv/*
 temp/*
 */*/__pycache__/*
+env/*
