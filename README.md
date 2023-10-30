@@ -1,15 +1,16 @@
 # SmartClassPlanningTool
 
+https://colab.research.google.com/drive/1a7jT5Uh_1r0OMFzWhxJUS-eBm6mX0JVJ#scrollTo=JbDK4M00mjiq 
 
 Please use the following command to run the program:
 ```
-cd src/
-
 python3 -m venv env #[optional]
 
 source env/bin/activate
 
 pip install -r requirements.txt
+
+cd src/
 
 python3 console.py "../Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/Sample Input2.pdf" "../Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/preReq3.json" "../Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/courseSchedule.json" "Plan1file"
 
