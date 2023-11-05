@@ -52,3 +52,19 @@ Functionalities:
 4) Excel sheet Generation
 ---
 ---
+
+
+---
+Guide to do the test cases
+
+Use the command python -m unittest discover -v to discover and execute all the tests.
+Use the command python -m unittest test_package.test_module -v to run a single test module.
+Use the command python -m unittest test_package.test_module.TestClass -v to run a single test class.
+Use the command python -m unittest test_package.test_module.TestClass.test_method -v to run a single test method.
+
+```
+python3 -m unittest discover -v
+python3 -m coverage run -m unittest
+python3 -m coverage report
+python3 -m coverage html 
+```

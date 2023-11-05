@@ -44,7 +44,7 @@ def main():
         print("\n\ngraph:")
         graph = process_prerequisites(file_paths[1])
         # schedule
-        print("\n\schedule:")
+        print("\n\nschedule:")
         schedule = process_class_schedule(file_paths[2])
         courses_to_take = generate_degree_plan(text, graph, schedule)
         create_excel_file(courses_to_take, args.file)
