@@ -1,8 +1,10 @@
 from argparse import Namespace
 import unittest
 from unittest.mock import patch
-from src import console  # Import the module you want to test
+
+from src import console
 from src.console import validate_files
+
 
 class TestConsole(unittest.TestCase):
 
@@ -10,10 +12,10 @@ class TestConsole(unittest.TestCase):
     @patch('argparse.ArgumentParser.parse_args')
     def test_main_with_valid_files(self, mock_parse_args):
         # Mock the command-line arguments
-        f1="./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/Sample Input1.pdf"
-        f2="./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/preReq2.json"
-        f3="./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/courseSchedule.json"
-        file="output.xlsx"
+        f1 = "./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/Sample Input1.pdf"
+        f2 = "./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/preReq2.json"
+        f3 = "./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/courseSchedule.json"
+        file = "output.xlsx"
         mock_parse_args.return_value = Namespace(
             f1=f1,
             f2=f2,
@@ -89,6 +91,7 @@ class TestConsole(unittest.TestCase):
         file_paths = ["sample.pdf", "data.json", "schedule.txt"]
         result = validate_files(file_paths)
         self.assertFalse(result, "Expected False for missing 'json'")
+
 
 if __name__ == '__main__':
     unittest.main()
