@@ -42,5 +42,3 @@ class TestPrerequisiteGraph(unittest.TestCase):
         self.assertTrue(graph.has_edge("CourseB", "Prerequisite3"))
 
 
-if __name__ == '__main__':
-    unittest.main()

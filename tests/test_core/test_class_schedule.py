@@ -20,5 +20,3 @@ class TestClassSchedule(unittest.TestCase):
         self.assertEqual(result, class_schedule_data, "Expected class schedule data")
         mock_file_open.assert_called_once_with(input_file, 'r')
 
-if __name__ == '__main__':
-    unittest.main()

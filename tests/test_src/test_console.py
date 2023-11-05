@@ -93,5 +93,3 @@ class TestConsole(unittest.TestCase):
         self.assertFalse(result, "Expected False for missing 'json'")
 
 
-if __name__ == '__main__':
-    unittest.main()

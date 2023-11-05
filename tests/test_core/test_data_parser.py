@@ -36,6 +36,3 @@ class TestDataParser(unittest.TestCase):
 
         self.assertEqual(result, expected_course_data)
 
-
-if __name__ == '__main__':
-    unittest.main()

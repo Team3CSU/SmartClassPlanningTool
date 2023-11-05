@@ -2,8 +2,10 @@ from networkx import DiGraph
 
 
 def has_prerequisites(course: str, graph: DiGraph):
-    if graph.has_node(course):
-        return True
+    # if graph.has_node(course):
+    for edge in graph.edges():
+        if edge[0] == course:
+            return True
     return False
 
 
@@ -97,6 +99,7 @@ def generate_degree_plan(text: dict, graph: DiGraph, Courseshedule: dict = None)
 
     for course in sorted(courses_plan_dict, key=lambda x: sorter(courses_plan_dict[x]), reverse=True):
         for dep in courses_plan_dict[course]:
+            # print
             pass
 
     coursesTaken, planned = AcadPlanner(courses_plan_dict, Courseshedule, graph, Sems, courses_to_take, after=(0, -1))
@@ -110,7 +113,7 @@ def generate_degree_plan(text: dict, graph: DiGraph, Courseshedule: dict = None)
     return Sems
 
 
-def AcadPlanner(courses_plan_dict, Courseshedule, graph, Sems, courses_to_take, coursesTaken=None, plandep=0,
+def AcadPlanner(courses_plan_dict, Courseshedule, graph, Sems, courses_to_take=None, coursesTaken=None, plandep=0,
                 after=(0, -1)):
     if not coursesTaken:
         coursesTaken = list()

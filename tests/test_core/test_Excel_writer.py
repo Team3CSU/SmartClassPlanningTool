@@ -32,5 +32,3 @@ class TestExcelWriter(unittest.TestCase):
         # Close the workbook
         workbook.close()
 
-if __name__ == '__main__':
-    unittest.main()
