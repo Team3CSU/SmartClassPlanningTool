@@ -1,9 +1,9 @@
 import argparse
-from core.class_schedule import process_class_schedule
-from core.prerequisite_graph import process_prerequisites
-from core.recommendation import generate_degree_plan
-from core.data_parser import extract_and_store_courses
-from core.excel_writer import create_excel_file
+from src.core.class_schedule import process_class_schedule
+from src.core.prerequisite_graph import process_prerequisites
+from src.core.recommendation import generate_degree_plan
+from src.core.data_parser import extract_and_store_courses
+from src.core.excel_writer import create_excel_file
 
 
 def validate_files(file_paths):
@@ -31,6 +31,7 @@ def main():
     parser.add_argument('file', type=str, help='Path to the results')
     args = parser.parse_args()
 
+    # print(args)
     # Now you can use args.file1, args.file2, and args.file3 to access the files
     file_paths = [args.f1, args.f2, args.f3]
     are_files_valid = validate_files(file_paths)
