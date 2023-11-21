@@ -3,6 +3,7 @@ from src.core.data_parser import (
     parse_course_requirements,
     extract_courses_from_pdf,
     extract_and_store_courses,
+    parse_course_requirements_from_pdf,
 )
 
 
@@ -17,6 +18,7 @@ class TestDataParser(unittest.TestCase):
     def test_extract_courses_from_pdf(self):
         # Mock the text extracted from a PDF
         pdf_text = "AREA A: CourseA1 CourseA2\nAREA B: CourseB1 CourseB2 CourseB3\n"
+        parse_course_requirements_from_pdf("./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/Sample Input1.pdf")
 
         with unittest.mock.patch('pdfminer.high_level.extract_text', return_value=pdf_text):
             result = extract_courses_from_pdf("./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/Sample Input1.pdf")
@@ -29,6 +31,7 @@ class TestDataParser(unittest.TestCase):
     def test_extract_and_store_courses(self):
         # Mock the text extracted from a PDF
         pdf_text = "AREA A: CourseA1 CourseA2\nStill Needed: CourseA3 CourseA4\nAREA B: CourseB1 CourseB2\n"
+    
 
         with unittest.mock.patch('pdfminer.high_level.extract_text', return_value=pdf_text):
             result = extract_and_store_courses("./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/Sample Input1.pdf")

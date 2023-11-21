@@ -1,4 +1,5 @@
 from networkx import DiGraph
+import os
 
 
 def has_prerequisites(course: str, graph: DiGraph):
@@ -26,6 +27,9 @@ def get_prerequisites(course: str, graph: DiGraph):
 def cleanCourseCode(coursesRaw: list, Courseshedule):
     courses = []
     for course in coursesRaw:
+        if "SELECT" in course:
+            courses.append(course)
+            continue
         course = course if "*" not in course else course[:course.find("*")]
         course = course.strip()
         course = " ".join(course.split());
@@ -66,9 +70,9 @@ def extractPreq(courses_to_take, course, graph, lvl=0):
     return dependencies, courses_to_take
 
 
-def generate_degree_plan(text: dict, graph: DiGraph, Courseshedule: dict = None):
+def generate_degree_plan(text: dict, graph: DiGraph, Courseshedule: dict = None,logsfolder=None):
     courses_to_take = []
-
+    logfile  = open(f'{logsfolder}/extracted_logs.txt', 'a')
     courses_plan_dict = {}
     coursecount = 0
     # run a loop over all the keys of courses that have to be taken
@@ -78,6 +82,12 @@ def generate_degree_plan(text: dict, graph: DiGraph, Courseshedule: dict = None)
         counter = 0
         limit = 0
         courses = cleanCourseCode(coursesRaw, Courseshedule)
+        if logsfolder:
+            print("\narea : "+ key,file = logfile)
+            print("\n\t\traw =>",coursesRaw,file = logfile)
+            print("\t\tclean=>",courses,file = logfile)
+        print("*******"*20)
+        
         for course in courses:
             dependencies = []
             if "SELECT".lower() in course.lower():
@@ -94,36 +104,43 @@ def generate_degree_plan(text: dict, graph: DiGraph, Courseshedule: dict = None)
                 if original_course not in courses_to_take:
                     courses_to_take.append(original_course)
                 counter = counter + 1
+        if logsfolder:
+            print("\n","courses_to_take",file = logfile)
+            print(courses_to_take,file = logfile)
     # return courses_to_take,courses_plan_dict
     Sems = {0: newAcademicYr(), 1: newAcademicYr()}
 
-    for course in sorted(courses_plan_dict, key=lambda x: sorter(courses_plan_dict[x]), reverse=True):
-        for dep in courses_plan_dict[course]:
-            # print
-            pass
-
-    coursesTaken, planned = AcadPlanner(courses_plan_dict, Courseshedule, graph, Sems, courses_to_take, after=(0, -1))
+    if logsfolder:
+        print("\n\nExtracting prereq",file = logfile)
+        for course in sorted(courses_plan_dict, key=lambda x: sorter(courses_plan_dict[x]), reverse=True):
+            print("\t\tMain course: ",course,file = logfile)
+            for dep in courses_plan_dict[course]:
+                print("\t\t","\t"*(dep[1]+1),dep,file = logfile)
+        print("Started planning",file = logfile)
+    coursesTaken, planned = AcadPlanner(courses_plan_dict, Courseshedule, graph, Sems, courses_to_take, after=(0, -1),logfile=logfile)
+    coursesTaken_last = AcadPlannerLast(courses_plan_dict, Courseshedule, Sems, courses_to_take,coursesTaken=coursesTaken,logfile=logfile)
     coursesTaken_c = [c for c, t in coursesTaken]
-    for crs in courses_to_take:
-        if crs not in coursesTaken_c:
-            pass
-    else:
-        pass
 
     return Sems
 
 
 def AcadPlanner(courses_plan_dict, Courseshedule, graph, Sems, courses_to_take=None, coursesTaken=None, plandep=0,
-                after=(0, -1)):
+                after=(0, -1),logfile=None):
     if not coursesTaken:
         coursesTaken = list()
     planed = None
     for course in sorted(courses_plan_dict, key=lambda x: sorter(courses_plan_dict[x]), reverse=True):
+        if logfile:
+            print("\t"*plandep,"planning course :",course,file = logfile)
         plannedmax = after
         planlst = [after]
         dependencies = courses_plan_dict.get(course, extractPreq([course], course, graph)[0])
         # if no dep, place it
         if len(dependencies):
+            # if dep constains last skip it
+            for dep in sorted(dependencies, key=lambda x: x[1], reverse=True):
+                if(dep[0]=="LAST"):
+                    return coursesTaken, planed
             # iterate dependecies depth wise
             lvl = -1
             for dep in sorted(dependencies, key=lambda x: x[1], reverse=True):
@@ -136,24 +153,56 @@ def AcadPlanner(courses_plan_dict, Courseshedule, graph, Sems, courses_to_take=N
                     lvl = dep[1]
                     plannedmax = max(planlst)
                     planlst = [after]
+                if logfile:
+                    print("\t"*plandep,"planning course :",dep[0],dep[1],file = logfile)
                 ctt, planed = AcadPlanner({dep[0]: extractPreq([dep[0]], dep[0], graph)[0]}, Courseshedule, graph, Sems,
-                                          [], coursesTaken, plandep=1, after=plannedmax)
+                                          [], coursesTaken, plandep=dep[1], after=plannedmax,logfile=logfile)
                 coursesTaken = ctt
                 assert (planed is not None)
                 planlst.append(planed)
 
         cc = [c for c, c_ in coursesTaken]
         if course not in cc:
+            if logfile:
+                print("\t"*plandep,"planning course :",course,f"after => {after}",file = logfile)
             coursesTaken.append((course, plannedmax))
             planed = PlaceCourse(course, Courseshedule, plandep, Sems, max(planlst))
 
     return coursesTaken, planed
 
+def AcadPlannerLast(courses_plan_dict, Courseshedule, Sems, courses_to_take,coursesTaken=None,logfile=None):
+    if not coursesTaken:
+        coursesTaken = list()
+    planed = None
+    yr = max(Sems)
+    sem = 0
+    print(Sems)
+    for s in Sems[yr]:
+        if len(Sems[yr][s]):
+            sem = s
+    
+    sem = SemCodedict[0][sem]
+    print(yr,sem)
+    plannedmax = (yr,sem)
+    for course in sorted(courses_plan_dict, key=lambda x: sorter(courses_plan_dict[x]), reverse=True):
+        dependencies = courses_plan_dict.get(course, [])
+        if len(dependencies) == 1:
+            for dep in sorted(dependencies, key=lambda x: x[1], reverse=True):
+                if(dep[0]=="LAST"):
+                    print("placing last")
+                cc = [c for c, c_ in coursesTaken]
+                if course not in cc:
+                    if logfile:
+                        print("planning course :",course,f"after => {plannedmax}",file = logfile)
+                    coursesTaken.append((course, plannedmax))
+                    planed = PlaceCourse(course, Courseshedule, 0, Sems, plannedmax,noincr=True)
+
+
 
 SemCodedict = [{"Fa": 0, "Sp": 1, "Su": 2}, {0: 'Fa', 1: 'Sp', 2: 'Su'}]
 
 
-def PlaceCourse(course, CourseSchedule, isdependency, Sems, after):
+def PlaceCourse(course, CourseSchedule, isdependency, Sems, after,noincr=False):
     """
     course: course name
     CourseSchedule: dictionary mapping course names to a list of semesters in which they are available
@@ -165,7 +214,7 @@ def PlaceCourse(course, CourseSchedule, isdependency, Sems, after):
     earliest_available = None
     # Check if the course is a dependency
     # Find the earliest available semester for the dependency course
-    earliest_available = getEarliestAvailableSem(course, CourseSchedule, after)
+    earliest_available = getEarliestAvailableSem(course, CourseSchedule, after,noincr)
     year, sem = earliest_available
     if year not in Sems:
         Sems[year] = newAcademicYr()
@@ -184,8 +233,9 @@ def incAfter(after):
     return (year, semCode)
 
 
-def getEarliestAvailableSem(course, CourseSchedule, after):
-    after = incAfter(after)
+def getEarliestAvailableSem(course, CourseSchedule, after,noincr=False):
+    if not noincr:
+        after = incAfter(after)
     courseAvail = CourseSchedule[course]
     # ##print()
     SemCodedict = {"Fa": 0, "Sp": 1, "Su": 2}, {0: 'Fa', 1: 'Sp', 2: 'Su'}
@@ -199,31 +249,3 @@ def getEarliestAvailableSem(course, CourseSchedule, after):
             after = incAfter(after)
         else:
             return after
-
-
-def generate_degree_plan_phase1(text: dict, graph: DiGraph, Courseshedule: dict = None):
-    courses_to_take = []
-    # run a loop over all the keys of courses that have to be taken
-    for key in text.keys():
-        # extract courses for each key
-        coursesRaw = text[key]
-        counter = 0
-        limit = 0
-        courses = cleanCourseCode(coursesRaw)
-        for course in courses:
-            if "SELECT".lower() in course.lower():
-                # if there is a selection criteria, set it as a limit
-                limit = int(course.split(" ")[1].strip())
-            if limit > 0 and counter == limit:
-                # if the selection criteria has been satisfied break the inner loop
-                break
-            if "SELECT".lower() not in course.lower():
-                original_course = course
-                while has_prerequisites(course, graph):
-                    course = get_prerequisite(course, graph)
-                    if course is not None and course not in courses_to_take:
-                        courses_to_take.append(course)
-                if original_course not in courses_to_take:
-                    courses_to_take.append(original_course)
-                counter = counter + 1
-    return courses_to_take

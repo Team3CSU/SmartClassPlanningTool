@@ -1,6 +1,7 @@
 #  parsing pdf
 import re
 from pdfminer.high_level import extract_text
+import os
 
 
 def parse_course_requirements_from_pdf(input_file):
@@ -55,7 +56,7 @@ def extract_courses_from_pdf(pdf_file_path):
     return course_data
 
 
-def extract_and_store_courses(pdf_file_path):
+def extract_and_store_courses(pdf_file_path,logsfolder = None)->list:
     course_data = {}  # Dictionary to store course data
     current_area = None
     current_courses = []
@@ -90,15 +91,21 @@ def extract_and_store_courses(pdf_file_path):
 
         if current_area:
             course_data[current_area] = current_courses
-
+    # write to log
+    if logsfolder:
+        with open(f'{logsfolder}/extracted_logs.txt', 'a') as filehandle:
+            for key, value in course_data.items():
+                filehandle.write("\narea"+str(key))
+                for course in value:
+                    filehandle.write("\n\t\tcourse :"+str(course))
     return course_data
 
 
-if __name__ == "__main__":
-    # Example usage:
-    pdf_file = "./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/Sample Input1.pdf"  # Replace with your PDF file name
-    requirements = parse_course_requirements_from_pdf(pdf_file)
+# if __name__ == "__main__":
+#     # Example usage:
+#     pdf_file = "./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/Sample Input1.pdf"  # Replace with your PDF file name
+#     requirements = parse_course_requirements_from_pdf(pdf_file)
 
-    # Print the parsed course requirements
-    for category, course in requirements:
-        print(f"{category}\n{course}\n")
+#     # Print the parsed course requirements
+#     for category, course in requirements:
+#         print(f"{category}\n{course}\n")

@@ -1,9 +1,35 @@
 import argparse
-from src.core.class_schedule import process_class_schedule
-from src.core.prerequisite_graph import process_prerequisites
-from src.core.recommendation import generate_degree_plan
-from src.core.data_parser import extract_and_store_courses
-from src.core.excel_writer import create_excel_file
+try:
+    from core.class_schedule import process_class_schedule
+    from core.prerequisite_graph import process_prerequisites
+    from core.recommendation import generate_degree_plan
+    from core.data_parser import extract_and_store_courses
+    from core.excel_writer import create_excel_file
+except:
+    from src.core.class_schedule import process_class_schedule
+    from src.core.prerequisite_graph import process_prerequisites
+    from src.core.recommendation import generate_degree_plan
+    from src.core.data_parser import extract_and_store_courses
+    from src.core.excel_writer import create_excel_file
+    
+
+import os
+
+# Get the path of the currently running Python script
+script_path = os.path.realpath(__file__)
+
+# Get the parent folder path
+parent_folder = os.path.dirname(script_path)
+parent_folder = os.path.dirname(parent_folder)
+
+# Create the "logs" folder if it doesn't exist
+logs_folder = os.path.join(parent_folder, "logs")
+
+if not os.path.exists(logs_folder):
+    os.makedirs(logs_folder)
+    print(f"Created 'logs' folder at {logs_folder}")
+else:
+    print(f"'logs' folder already exists at {logs_folder}")
 
 
 def validate_files(file_paths):
@@ -37,7 +63,7 @@ def main():
     are_files_valid = validate_files(file_paths)
 
     if are_files_valid:
-        text = extract_and_store_courses(file_paths[0])
+        text = extract_and_store_courses(file_paths[0],logsfolder=logs_folder)
         print("\n\nExtracted courses:")
         for k in text:
             print(f"{k}  :                 {text[k]}")
@@ -46,7 +72,7 @@ def main():
         # schedule
         print("\n\nschedule:")
         schedule = process_class_schedule(file_paths[2])
-        courses_to_take = generate_degree_plan(text, graph, schedule)
+        courses_to_take = generate_degree_plan(text, graph, schedule,logsfolder=logs_folder)
         create_excel_file(courses_to_take, args.file)
     else:
         print("Please provide valid input files.")

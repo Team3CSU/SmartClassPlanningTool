@@ -21,18 +21,14 @@ def create_excel_file(data, filename):
         for semester, courses in semesters.items():
             if courses:
                 # Write the semester heading and format it as bold
-                semester_full = {
-                    'Fa': 'Fall',
-                    'Sp': 'Spring',
-                    'Su': 'Summer'
-                }
+                semester_full = {'Fa': 'Fall','Sp': 'Spring','Su': 'Summer'}
                 semester_heading = f'Semester: {semester_full[semester]}'
                 semester_heading_cell = worksheet.cell(row=worksheet.max_row + 1, column=1, value=semester_heading)
                 semester_heading_cell.font = Font(bold=True)
 
                 # Write the courses
                 for course in courses:
-                    course_cell = worksheet.cell(row=worksheet.max_row + 1, column=2, value=course)
+                    worksheet.cell(row=worksheet.max_row + 1, column=2, value=course)
 
     # Remove the default sheet created by openpyxl
     workbook.remove(workbook.active)
@@ -43,13 +39,12 @@ def create_excel_file(data, filename):
     return filename
 
 
-if __name__ == "__main__":
-    # Your input dictionary
-    data = {
-        0: {'Fa': ['CPSC 1301K', 'CPSC 2105', 'CPSC 3165', 'CPSC 4000'], 'Sp': ['CPSC 1302', 'CPSC 3121'],
-            'Su': ['CPSC 2108']},
-        1: {'Fa': ['CPSC 3175'], 'Sp': [], 'Su': []},
-        2: {'Fa': ['CPSC 4175'], 'Sp': ['CPSC 4176'], 'Su': []}
-    }
-
-    create_excel_file(data, "file.xlsx")
+# if __name__ == "__main__":
+#     # Your input dictionary
+#     data = {
+#         0: {'Fa': ['CPSC 1301K', 'CPSC 2105', 'CPSC 3165', 'CPSC 4000'], 'Sp': ['CPSC 1302', 'CPSC 3121'],
+#             'Su': ['CPSC 2108']},
+#         1: {'Fa': ['CPSC 3175'], 'Sp': [], 'Su': []},
+#         2: {'Fa': ['CPSC 4175'], 'Sp': ['CPSC 4176'], 'Su': []}
+#     }
+#     create_excel_file(data, "file.xlsx")

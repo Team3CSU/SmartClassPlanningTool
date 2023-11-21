@@ -1,6 +1,6 @@
 import unittest
 from networkx import DiGraph
-from src.core.recommendation import PlaceCourse, cleanCourseCode, extractPreq, getEarliestAvailableSem, has_prerequisites, get_prerequisite,get_prerequisites, incAfter, newAcademicYr, sorter  # Replace 'your_module' with the actual module name
+from src.core.recommendation import PlaceCourse, cleanCourseCode, extractPreq, generate_degree_plan, getEarliestAvailableSem, has_prerequisites, get_prerequisite,get_prerequisites, incAfter, newAcademicYr, sorter  # Replace 'your_module' with the actual module name
 
 class TestPrerequisiteFunctions(unittest.TestCase):
     def setUp(self):
@@ -18,6 +18,12 @@ class TestPrerequisiteFunctions(unittest.TestCase):
         self.graph.add_edge("CourseX", "CourseY")
         self.courses = {"CourseA", "CourseB", "CourseC", "CourseD"}
         self.AcadDict = {0: newAcademicYr()}
+        self.courseSchedule = {
+            "CourseA": ["Fa", "Sp"],
+            "CourseB": ["Sp", "Su"],
+            "CourseC": ["Fa","Sp", "Su"],
+            "CourseD": ["Fa","Sp", "Su"]
+        }
 
     def test_has_prerequisites_true(self):
         # Test if a course has prerequisites (should return True)
@@ -152,8 +158,15 @@ class TestPrerequisiteFunctions(unittest.TestCase):
         self.assertEqual(planned, (0, 0), "Expected the course to be planned in the next available semester")
 
     def test_extractPreq(self):
-        courses_to_take = []
         course = "CourseA" #,"CourseX"
         result =  extractPreq([],course,self.graph)
         self.assertTrue("CoursCA" not in result or "CourseB" not in result, "prerequestite Extraction Not functional")
 
+    def test_generate_degree_plan(self):
+        degreePlan = generate_degree_plan(
+            {"area":["CourseA"]}, self.graph, self.courseSchedule)
+        expectedDegreePlan ={0: {'Fa': ['CourseC'], 'Sp': ['CourseB', 'CourseD'], 'Su': []}, 1: {'Fa': ['CourseA'], 'Sp': [], 'Su': []}}
+        # print("expectedDegreePlan: ", degreePlan)
+        self.assertAlmostEqual(
+            expectedDegreePlan,degreePlan
+        )
