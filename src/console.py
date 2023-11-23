@@ -6,11 +6,16 @@ try:
     from core.data_parser import extract_and_store_courses
     from core.excel_writer import create_excel_file
 except:
-    from src.core.class_schedule import process_class_schedule
-    from src.core.prerequisite_graph import process_prerequisites
-    from src.core.recommendation import generate_degree_plan
-    from src.core.data_parser import extract_and_store_courses
-    from src.core.excel_writer import create_excel_file
+    try:
+        from src.core.class_schedule import process_class_schedule
+        from src.core.prerequisite_graph import process_prerequisites
+        from src.core.recommendation import generate_degree_plan
+        from src.core.data_parser import extract_and_store_courses
+        from src.core.excel_writer import create_excel_file
+    except:
+        print("Error: Could not import necessary modules")
+        import sys
+        sys.exit()
     
 
 import os
@@ -47,19 +52,20 @@ file_entries = []
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Process some files.')
-    parser.add_argument('f1', type=str, help='Path to the first file [Degree Works]',
-                        default="../Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/Sample Input2.pdf")
-    parser.add_argument('f2', type=str, help='Path to the second file [Prerequisite Graph]',
-                        default="../Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/preReq.json")
-    parser.add_argument('f3', type=str, help='Path to the third file [Class Schedule]',
-                        default="../Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/courseSchedule.json")
-    parser.add_argument('file', type=str, help='Path to the results')
-    args = parser.parse_args()
 
-    # print(args)
-    # Now you can use args.file1, args.file2, and args.file3 to access the files
-    file_paths = [args.f1, args.f2, args.f3]
+    # Manually prompt for each file path instead of using argparse
+    f1 = input('Enter the path to the first file [Degree Works] (default: "./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/Sample Input2.pdf"): ')
+    f2 = input('Enter the path to the second file [Prerequisite Graph] (default: "./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/preReq.json"): ')
+    f3 = input('Enter the path to the third file [Class Schedule] (default: "./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/courseSchedule.json"): ')
+    output_file = input('Enter the path to the results file: ')
+
+    # Provide default values if no input is given
+    f1 = f1 or "./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/Sample Input2.pdf"
+    f2 = f2 or "./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/preReq.json"
+    f3 = f3 or "./Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/courseSchedule.json"
+
+    # Rest of your code remains the same
+    file_paths = [f1, f2, f3]
     are_files_valid = validate_files(file_paths)
 
     if are_files_valid:
@@ -73,7 +79,7 @@ def main():
         print("\n\nschedule:")
         schedule = process_class_schedule(file_paths[2])
         courses_to_take = generate_degree_plan(text, graph, schedule,logsfolder=logs_folder)
-        create_excel_file(courses_to_take, args.file)
+        create_excel_file(courses_to_take, output_file)
     else:
         print("Please provide valid input files.")
 
