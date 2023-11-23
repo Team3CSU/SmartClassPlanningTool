@@ -6,7 +6,6 @@ env/*
 */__pycache__/*
 src/dist/*
 build/*
-dist/*
 src/build/*
 src/dist/*
 *.xlsx
