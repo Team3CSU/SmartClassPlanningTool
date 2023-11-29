@@ -147,3 +147,10 @@ python3 -m coverage run -m unittest
 python3 -m coverage report
 python3 -m coverage html 
 ```
+
+
+## to build executable file
+
+Add all code to consolenew.py and format it properly
+
+> pyinstaller --onefile --console src/consolenew.py
