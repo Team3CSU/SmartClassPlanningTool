@@ -184,26 +184,31 @@ def AcadPlanner(courses_plan_dict, Courseshedule, graph, Sems, courses_to_take=N
                 if lvl == -1:
                     lvl = dep[1]
                 cc = [c for c, c_ in coursesTaken]
-                if dep[0] in cc:
-                    continue
                 if lvl > dep[1]:
                     lvl = dep[1]
                     plannedmax = max(planlst)
                     planlst = [after]
                 if logfile:
                     print("\t"*plandep,"planning course :",dep[0],dep[1],file = logfile)
-                ctt, planed = AcadPlanner({dep[0]: extractPreq([dep[0]], dep[0], graph)[0]}, Courseshedule, graph, Sems,
-                                          [], coursesTaken, plandep=dep[1], after=plannedmax,logfile=logfile)
-                coursesTaken = ctt
-                assert (planed is not None)
-                planlst.append(planed)
+                
+                if dep[0] in cc:
+                    for i in coursesTaken:
+                        if i[0]==dep[0]:
+                            planlst.append(i[1])
+                else:
+                    ctt, planed = AcadPlanner({dep[0]: extractPreq([dep[0]], dep[0], graph)[0]}, Courseshedule, graph, Sems,
+                                            [], coursesTaken, plandep=dep[1], after=plannedmax,logfile=logfile)
+                    coursesTaken = ctt
+                    assert (planed is not None)
+                    planlst.append(planed)
+        plannedmax = max(planlst)
 
         cc = [c for c, c_ in coursesTaken]
         if course not in cc:
             if logfile:
                 print("\t"*plandep,"planning course :",course,f"after => {after}",file = logfile)
-            coursesTaken.append((course, plannedmax))
-            planed = PlaceCourse(course, Courseshedule, plandep, Sems, max(planlst))
+            planed = PlaceCourse(course, Courseshedule, plandep, Sems, max(planlst),logfile=logfile)
+            coursesTaken.append((course, planed))
 
     return coursesTaken, planed
 
@@ -233,21 +238,21 @@ def AcadPlannerLast(courses_plan_dict, Courseshedule, Sems, courses_to_take,cour
                 if course not in cc:
                     if logfile:
                         print("planning course :",course,f"after => {plannedmax}",file = logfile)
-                    coursesTaken.append((course, plannedmax))
                     planed = PlaceCourse(course, Courseshedule, 0, Sems, plannedmax,noincr=True)
+                    coursesTaken.append((course, planed))
 
 
 
 SemCodedict = [{"Fa": 0, "Sp": 1, "Su": 2}, {0: 'Fa', 1: 'Sp', 2: 'Su'}]
 
 
-def PlaceCourse(course, CourseSchedule, isdependency, Sems, after,noincr=False):
+def PlaceCourse(course, CourseSchedule, isdependency, Sems, after,noincr=False,logfile=None):
     """
-    course: course name
-    CourseSchedule: dictionary mapping course names to a list of semesters in which they are available
-    isdependency: boolean indicating whether the course is a dependency
-    Sems: plan of the semesters assigned with courses, where planned course details are updated
-    after: semester from which we are planning
+        course: course name
+        CourseSchedule: dictionary mapping course names to a list of semesters in which they are available
+        isdependency: boolean indicating whether the course is a dependency
+        Sems: plan of the semesters assigned with courses, where planned course details are updated
+        after: semester from which we are planning
     """
     planned = None
     earliest_available = None
@@ -258,18 +263,25 @@ def PlaceCourse(course, CourseSchedule, isdependency, Sems, after,noincr=False):
     if year not in Sems:
         Sems[year] = newAcademicYr()
     Sems[year][SemCodedict[1][sem]].append(course)
+    print(f"course{course} placed at year{year} sem{sem} {SemCodedict[1][sem]}",file=logfile)
     planned = earliest_available
 
     return planned
 
-def validate_curr_course(courses_taken,course):
+def validate_curr_course(courses_taken,course,graph):
+    # print("courses taken",courses_taken)
+    # print("course pre req: ",get_prerequisites(course, graph))
+    # print(f"Course '{course}' cannot be added to the list of courses taken")
+    # print("Schedule invalid: Course has prerequisite issue.")
     """
     validates prerequesites
     
     """
-    for c in courses_taken:
-        pass
+    for c in get_prerequisites(course, graph):
+        if (c, ) not in courses_taken:
+            return False
     return True
+        
 
 def incAfter(after):
     year, semCode = after
@@ -550,20 +562,27 @@ def feature2():
     except:
         print("Error in processing the input files.[networkx]")
         return
+    if courses and graph:
+        pass
+    else:
+        return
 
     try:
         courses_taken = []
+        Fail = 0
         for course in courses:
-            if validate_curr_course(courses_taken,course):
+            if validate_curr_course(courses_taken,course,graph):
                 courses_taken.append(course)
                 # print(f"Course '{course}' added to the list of courses taken.")
             else:
+                Fail = 1
                 print("courses taken",courses_taken)
                 print("course pre req: ",get_prerequisites(course, graph))
                 print(f"Course '{course}' cannot be added to the list of courses taken")
                 print("Schedule invalid: Course has prerequisite issue.")
                 break
-        print("Course plan Schedule is Valid")
+
+        print("Course plan Schedule is","Valid" if not Fail else "Not Valid")
     except Exception as e:
         print("Error:", e)
 

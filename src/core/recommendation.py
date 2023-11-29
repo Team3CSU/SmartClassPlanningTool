@@ -147,26 +147,31 @@ def AcadPlanner(courses_plan_dict, Courseshedule, graph, Sems, courses_to_take=N
                 if lvl == -1:
                     lvl = dep[1]
                 cc = [c for c, c_ in coursesTaken]
-                if dep[0] in cc:
-                    continue
                 if lvl > dep[1]:
                     lvl = dep[1]
                     plannedmax = max(planlst)
                     planlst = [after]
                 if logfile:
                     print("\t"*plandep,"planning course :",dep[0],dep[1],file = logfile)
-                ctt, planed = AcadPlanner({dep[0]: extractPreq([dep[0]], dep[0], graph)[0]}, Courseshedule, graph, Sems,
-                                          [], coursesTaken, plandep=dep[1], after=plannedmax,logfile=logfile)
-                coursesTaken = ctt
-                assert (planed is not None)
-                planlst.append(planed)
+                
+                if dep[0] in cc:
+                    for i in coursesTaken:
+                        if i[0]==dep[0]:
+                            planlst.append(i[1])
+                else:
+                    ctt, planed = AcadPlanner({dep[0]: extractPreq([dep[0]], dep[0], graph)[0]}, Courseshedule, graph, Sems,
+                                            [], coursesTaken, plandep=dep[1], after=plannedmax,logfile=logfile)
+                    coursesTaken = ctt
+                    assert (planed is not None)
+                    planlst.append(planed)
+        plannedmax = max(planlst)
 
         cc = [c for c, c_ in coursesTaken]
         if course not in cc:
             if logfile:
                 print("\t"*plandep,"planning course :",course,f"after => {after}",file = logfile)
-            coursesTaken.append((course, plannedmax))
-            planed = PlaceCourse(course, Courseshedule, plandep, Sems, max(planlst))
+            planed = PlaceCourse(course, Courseshedule, plandep, Sems, max(planlst),logfile=logfile)
+            coursesTaken.append((course, planed))
 
     return coursesTaken, planed
 
@@ -181,7 +186,7 @@ def AcadPlannerLast(courses_plan_dict, Courseshedule, Sems, courses_to_take,cour
         if len(Sems[yr][s]):
             sem = s
     
-    sem = SemCodedict[0][sem]
+    sem = SemCodedict[1][sem]
     print(yr,sem)
     plannedmax = (yr,sem)
     for course in sorted(courses_plan_dict, key=lambda x: sorter(courses_plan_dict[x]), reverse=True):
