@@ -77,7 +77,7 @@ result would be generated on the terminal indicating whether the course plan
 has any prerequisite issues or not
 
 
-## Note for Developers:
+# Note for Developers:
 
 https://colab.research.google.com/drive/1a7jT5Uh_1r0OMFzWhxJUS-eBm6mX0JVJ#scrollTo=JbDK4M00mjiq 
 
