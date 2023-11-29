@@ -1,5 +1,7 @@
 # SmartClassPlanningTool
 
+Demo Link : https://drive.google.com/file/d/1fSX_ThSkJOlGgjTb0PviG1IBtHGN0dQj/view?usp=sharing
+
 ## Purpose
 
 This document describes how to set up and use the SmartClassPlanningTool
