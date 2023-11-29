@@ -74,4 +74,76 @@ file is the prerequisite graph which should be a json file. Provide the location
 the file and press enter to proceed to the next step. Second input file is course 
 plan file which should be an xlsx file. Once the two input files are provided, the 
 result would be generated on the terminal indicating whether the course plan 
-has any prerequisite issues or notx
+has any prerequisite issues or not
+
+
+## Note for Developers:
+
+https://colab.research.google.com/drive/1a7jT5Uh_1r0OMFzWhxJUS-eBm6mX0JVJ#scrollTo=JbDK4M00mjiq 
+
+Please use the following command to run the program:
+```
+python3 -m venv env #[optional]
+
+source env/bin/activate
+
+pip install -r requirements.txt
+
+
+
+python3 src/consolenew.py 
+
+
+#1 # for feature 1
+#enter file paths as per asked
+# "Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/Sample Input2.pdf" 
+#"Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/preReq3.json" 
+#"Software Design Development Section V01 Fall Semester 2023 CO - 10102023 - 1004 AM/courseSchedule.json" 
+# "Plan1file"
+#check the file from src/ folder or as per given file path
+
+# similarly for feature 2
+
+```
+
+---
+Functionalities of feature 1:
+
+1) Input parsing => 3 inputs
+
+2) Main Logic level 1 => looping the courses that need to be taked must
+
+
+3) Main logic level 2 => remaining residual that need to be met like optional to schedule
+
+
+4) Excel sheet Generation
+---
+
+---
+Functionalities of feature 2:
+
+1) Input parsing => 2 inputs
+
+2) Main Logic level 1 => looping the courses that are in schedule one by one
+
+
+3) Main logic level 2 => validate course is followed after all its requesites are covered
+
+
+4) print our results
+---
+
+Guide to do the test cases
+
+Use the command python -m unittest discover -v to discover and execute all the tests.
+Use the command python -m unittest test_package.test_module -v to run a single test module.
+Use the command python -m unittest test_package.test_module.TestClass -v to run a single test class.
+Use the command python -m unittest test_package.test_module.TestClass.test_method -v to run a single test method.
+
+```
+python3 -m unittest discover -v
+python3 -m coverage run -m unittest
+python3 -m coverage report
+python3 -m coverage html 
+```
