@@ -278,7 +278,7 @@ def validate_curr_course(courses_taken,course,graph):
     
     """
     for c in get_prerequisites(course, graph):
-        if (c, ) not in courses_taken:
+        if c not in courses_taken and c!="LAST":
             return False
     return True
         
